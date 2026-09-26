@@ -177,4 +177,16 @@ public class TicketDAO {
             return rowsUpdated > 0;
         }
     }
+    public boolean deleteTicket(int ticketId) throws SQLException {
+        String sql = "DELETE FROM tickets WHERE ticket_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, ticketId);
+
+            int rowsDeleted = statement.executeUpdate();
+            return rowsDeleted > 0;
+        }
+    }
 }

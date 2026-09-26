@@ -44,6 +44,9 @@ public class Main {
                     case 7:
                         closeTicket();
                         break;
+                    case 8:
+                        deleteTicket();
+                        break;
                     case 0:
                         running = false;
                         System.out.println("Exiting HelpDesk Lite. Goodbye!");
@@ -70,6 +73,7 @@ public class Main {
         System.out.println("5. Update ticket status");
         System.out.println("6. Update ticket priority");
         System.out.println("7. Close a ticket");
+        System.out.println("8. Delete a ticket");
         System.out.println("0. Exit");
         System.out.println("----------------------------");
     }
@@ -259,6 +263,35 @@ public class Main {
             System.out.println("Ticket closed successfully!");
         } else {
             System.out.println("Could not close the ticket.");
+        }
+    }
+    private static void deleteTicket() throws SQLException {
+        int ticketId = readInt("Enter ticket ID to delete: ");
+
+        Ticket ticket = ticketDAO.findById(ticketId);
+
+        if (ticket == null) {
+            System.out.println("No ticket found with that ID.");
+            return;
+        }
+
+        System.out.println("Ticket to delete:");
+        printTicket(ticket);
+
+        System.out.print("Are you sure you want to permanently delete this ticket? (Y/N): ");
+        String confirmation = scanner.nextLine().trim();
+
+        if (!confirmation.equalsIgnoreCase("Y")) {
+            System.out.println("Deletion cancelled.");
+            return;
+        }
+
+        boolean deleted = ticketDAO.deleteTicket(ticketId);
+
+        if (deleted) {
+            System.out.println("Ticket deleted successfully.");
+        } else {
+            System.out.println("Ticket could not be deleted. It may no longer exist.");
         }
     }
 }
