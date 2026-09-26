@@ -41,6 +41,9 @@ public class Main {
                     case 6:
                         updateTicketPriority();
                         break;
+                    case 7:
+                        closeTicket();
+                        break;
                     case 0:
                         running = false;
                         System.out.println("Exiting HelpDesk Lite. Goodbye!");
@@ -66,6 +69,7 @@ public class Main {
         System.out.println("4. Search tickets by employee name");
         System.out.println("5. Update ticket status");
         System.out.println("6. Update ticket priority");
+        System.out.println("7. Close a ticket");
         System.out.println("0. Exit");
         System.out.println("----------------------------");
     }
@@ -231,6 +235,30 @@ public class Main {
 
             System.out.println("Invalid value. Allowed values: "
                     + String.join(", ", allowedValues));
+        }
+    }
+    private static void closeTicket() throws SQLException {
+        System.out.println("\n--- Close Ticket ---");
+
+        int ticketId = readInt("Enter ticket ID to close: ");
+        Ticket ticket = ticketDAO.findById(ticketId);
+
+        if (ticket == null) {
+            System.out.println("No ticket found with ID " + ticketId);
+            return;
+        }
+
+        if (ticket.getStatus().equals("CLOSED")) {
+            System.out.println("This ticket is already closed.");
+            return;
+        }
+
+        boolean updated = ticketDAO.updateStatus(ticketId, "CLOSED");
+
+        if (updated) {
+            System.out.println("Ticket closed successfully!");
+        } else {
+            System.out.println("Could not close the ticket.");
         }
     }
 }
