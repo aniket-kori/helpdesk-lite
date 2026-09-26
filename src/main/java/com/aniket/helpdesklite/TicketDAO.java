@@ -121,4 +121,23 @@ public class TicketDAO {
             return rowsUpdated > 0;
         }
     }
+    public boolean updatePriority(int ticketId, String newPriority)
+            throws SQLException {
+
+        String sql = """
+                UPDATE tickets
+                SET priority = ?
+                WHERE ticket_id = ?
+                """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, newPriority);
+            statement.setInt(2, ticketId);
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
 }

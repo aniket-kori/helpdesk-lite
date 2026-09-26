@@ -9,25 +9,17 @@ public class Main {
         TicketDAO ticketDAO = new TicketDAO();
 
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Enter ticket ID to update: ");
+            System.out.print("Enter ticket ID to search: ");
             int ticketId = Integer.parseInt(scanner.nextLine());
 
-            System.out.print("Enter new status (OPEN, IN_PROGRESS, CLOSED): ");
-            String newStatus = scanner.nextLine().trim().toUpperCase();
+            Ticket ticket = ticketDAO.findById(ticketId);
 
-            if (!newStatus.equals("OPEN")
-                    && !newStatus.equals("IN_PROGRESS")
-                    && !newStatus.equals("CLOSED")) {
-                System.out.println("Invalid status. No changes made.");
-                return;
-            }
-
-            boolean updated = ticketDAO.updateStatus(ticketId, newStatus);
-
-            if (updated) {
-                System.out.println("Ticket status updated successfully!");
-            } else {
+            if (ticket == null) {
                 System.out.println("No ticket found with ID " + ticketId);
+            } else {
+                System.out.println("Ticket found:");
+                System.out.println("--------------------");
+                System.out.println(ticket);
             }
 
         } catch (NumberFormatException e) {
