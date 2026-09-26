@@ -102,6 +102,43 @@ public class TicketDAO {
 
         return null;
     }
+    public List<Ticket> findByEmployeeName(String employeeName)
+            throws SQLException {
+
+        List<Ticket> tickets = new ArrayList<>();
+
+        String sql = """
+                SELECT ticket_id, employee_name, department,
+                       title, description, priority, status
+                FROM tickets
+                WHERE employee_name LIKE ?
+                ORDER BY ticket_id
+                """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, "%" + employeeName + "%");
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Ticket ticket = new Ticket(
+                            resultSet.getString("employee_name"),
+                            resultSet.getString("department"),
+                            resultSet.getString("title"),
+                            resultSet.getString("description"),
+                            resultSet.getString("priority"),
+                            resultSet.getString("status")
+                    );
+
+                    ticket.setTicketId(resultSet.getInt("ticket_id"));
+                    tickets.add(ticket);
+                }
+            }
+        }
+
+        return tickets;
+    }
     public boolean updateStatus(int ticketId, String newStatus)
             throws SQLException {
 

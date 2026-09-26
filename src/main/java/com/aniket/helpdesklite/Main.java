@@ -1,6 +1,7 @@
 package com.aniket.helpdesklite;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -9,21 +10,27 @@ public class Main {
         TicketDAO ticketDAO = new TicketDAO();
 
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Enter ticket ID to search: ");
-            int ticketId = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter employee name or part of a name: ");
+            String employeeName = scanner.nextLine().trim();
 
-            Ticket ticket = ticketDAO.findById(ticketId);
-
-            if (ticket == null) {
-                System.out.println("No ticket found with ID " + ticketId);
-            } else {
-                System.out.println("Ticket found:");
-                System.out.println("--------------------");
-                System.out.println(ticket);
+            if (employeeName.isEmpty()) {
+                System.out.println("Employee name cannot be empty.");
+                return;
             }
 
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid whole-number ticket ID.");
+            List<Ticket> tickets =
+                    ticketDAO.findByEmployeeName(employeeName);
+
+            if (tickets.isEmpty()) {
+                System.out.println("No tickets found for: " + employeeName);
+            } else {
+                System.out.println("Matching tickets:");
+                for (Ticket ticket : tickets) {
+                    System.out.println("--------------------");
+                    System.out.println(ticket);
+                }
+            }
+
         } catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
         }
