@@ -70,4 +70,36 @@ public class TicketDAO {
 
         return tickets;
     }
+    public Ticket findById(int ticketId) throws SQLException {
+        String sql = """
+                SELECT ticket_id, employee_name, department,
+                       title, description, priority, status
+                FROM tickets
+                WHERE ticket_id = ?
+                """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, ticketId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Ticket ticket = new Ticket(
+                            resultSet.getString("employee_name"),
+                            resultSet.getString("department"),
+                            resultSet.getString("title"),
+                            resultSet.getString("description"),
+                            resultSet.getString("priority"),
+                            resultSet.getString("status")
+                    );
+
+                    ticket.setTicketId(resultSet.getInt("ticket_id"));
+                    return ticket;
+                }
+            }
+        }
+
+        return null;
+    }
 }
