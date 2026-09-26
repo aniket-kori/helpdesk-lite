@@ -102,4 +102,23 @@ public class TicketDAO {
 
         return null;
     }
+    public boolean updateStatus(int ticketId, String newStatus)
+            throws SQLException {
+
+        String sql = """
+                UPDATE tickets
+                SET status = ?
+                WHERE ticket_id = ?
+                """;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, newStatus);
+            statement.setInt(2, ticketId);
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
 }
